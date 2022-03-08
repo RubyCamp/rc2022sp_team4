@@ -1,5 +1,5 @@
 require 'mittsu'
-
+#実験　ああ
 Dir.glob("lib/*.rb") {|path| require_relative path }
 Dir.glob("directors/*.rb") {|path| require_relative path }
 
