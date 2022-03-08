@@ -30,12 +30,23 @@ module Directors
 
       # camera radian
       @camera_rad = 0
+
+      # 公転カメラと太陽カメラ
+      @cameras = [self.camera, Mittsu::PerspectiveCamera.new(self.camera.fov, self.camera.aspect, 0.1, 1000.0).tap { 
+        |cmr|
+        cmr.position.set(0, -4, 0) # yは-5以上
+        # self.camera.position.set(0, -8, 0) # 太陽で隠れて地球が見えん
+        # 移動後のカメラ位置から、原点（[0, 0, 0]）を注視し直す
+        cmr.look_at(Mittsu::Vector3.new(0, 0, 0))
+      }]
     end
 
     # １フレーム分の進行処理
     def play
-      # 地球を少しずつ回転させ、大気圏内を飛行してる雰囲気を醸し出す
-      # @earth.rotate_x(0.002)
+      # 地球を少しずつ回転させ、公転?してる雰囲気を醸し出す
+      @earth.play(speed_level: 1)
+      # ENTERキーでブースト
+      @earth.play(speed_level: 1) if self.renderer.window.key_down?(GLFW_KEY_ENTER)
 
       # 現在発射済みの弾丸を一通り動かす
       @bullets.each(&:play)
@@ -64,23 +75,27 @@ module Directors
       @frame_counter += 1
 
       # カメラ回転(バグ発生中)
-      # self.camera.position.x += Math.sin(@camera_rad * CAMERA_ROTATE_SPEED_X)   if self.renderer.window.key_down?(GLFW_KEY_UP)
-      # self.camera.position.x += Math.sin(@camera_rad * -CAMERA_ROTATE_SPEED_X)  if self.renderer.window.key_down?(GLFW_KEY_DOWN)
-      # self.camera.position.z += Math.cos(@camera_rad * CAMERA_ROTATE_SPEED_Y)   if self.renderer.window.key_down?(GLFW_KEY_LEFT)
-      # self.camera.position.z += Math.cos(@camera_rad * -CAMERA_ROTATE_SPEED_Y)  if self.renderer.window.key_down?(GLFW_KEY_RIGHT)
+      # self.camera.position.x = Math.sin(@camera_rad * CAMERA_ROTATE_SPEED_X)   if self.renderer.window.key_down?(GLFW_KEY_UP)
+      # self.camera.position.x = Math.sin(@camera_rad * -CAMERA_ROTATE_SPEED_X)  if self.renderer.window.key_down?(GLFW_KEY_DOWN)
+      # self.camera.position.z = Math.cos(@camera_rad * CAMERA_ROTATE_SPEED_Y)   if self.renderer.window.key_down?(GLFW_KEY_LEFT)
+      # self.camera.position.z = Math.cos(@camera_rad * -CAMERA_ROTATE_SPEED_Y)  if self.renderer.window.key_down?(GLFW_KEY_RIGHT)
     end
 
     # キー押下（単発）時のハンドリング
     def on_key_pressed(glfw_key:)
       case glfw_key
-        # ESCキー押下でエンディングに無理やり遷移
-        when GLFW_KEY_ESCAPE
-          puts 'シーン遷移 → EndingDirector'
-          transition_to_next_director
-
-        # SPACEキー押下で弾丸を発射
-        when GLFW_KEY_SPACE
-          shoot
+      # ESCキー押下でエンディングに無理やり遷移
+      when GLFW_KEY_ESCAPE
+        puts 'シーン遷移 → EndingDirector'
+        transition_to_next_director
+      # SPACEキー押下で弾丸を発射
+      when GLFW_KEY_SPACE
+        shoot
+      when GLFW_KEY_Z, GLFW_KEY_A
+        # 2要素だけだし、reverseで
+        self.camera = @cameras.reverse!.first
+        # rendererの再設定
+        renderer.render( self.scene, self.camera )
       end
     end
 
@@ -88,32 +103,26 @@ module Directors
 
     # ゲーム本編の登場オブジェクト群を生成
     def create_objects
-      # self.camera = Mittsu::PerspectiveCamera.new(75.0, aspect, 0.1, 1000.0)
-      self.camera.position.set(0, 0, 5)
+      self.camera.position.set(0, -1, 20)
+      # 移動後のカメラ位置から、原点（[0, 0, 0]）を注視し直す
+      self.camera.look_at(Mittsu::Vector3.new(0, 0, 0))
       
       # 太陽(光)をセット
-      # @sun = MeshFactory.create_earth
       # 太陽生成。
-      geometry = Mittsu::SphereGeometry.new(1, 64, 64)
-      material = Mittsu::MeshBasicMaterial.new(color: 0x00ff00)
+      geometry = Mittsu::SphereGeometry.new(5, 64, 64)
+      material = Mittsu::MeshBasicMaterial.new(color: 0xf3911b)
       @sun = Mittsu::Mesh.new(geometry, material)
-      @sun.position.y = 0
-      @sun.position.z = 0
+      # @sun = MeshFactory.create_sun
+      @sun.position.set(0, 0, 0)
       self.scene.add(@sun)
       
-      # @sunlite = LightFactory.create_sun_light
-      # @sunlite.position.set(0, 0, 0)
-      # self.scene.add(@sunlite)
+      @sunlite = LightFactory.create_sun_light
+      @sunlite.position.set(0, 0, 0)
+      self.scene.add(@sunlite)
 
       # 地球を作成し、カメラ位置（原点）に対して大気圏を飛行してるっぽく見える位置に移動させる
-      geometry = Mittsu::SphereGeometry.new(1, 64, 64)
-      material = Mittsu::MeshBasicMaterial.new(color: 0x00ff00)
-      @earth = Mittsu::Mesh.new(geometry, material)
-      @earth.position.x = 0
-      @earth.position.y = 2
-      @earth.position.z = 0
-      # @earth
-      self.scene.add(@earth)
+      @earth = Earth.new
+      self.scene.add(@earth.mesh)
     end
 
     # 弾丸発射
@@ -137,7 +146,7 @@ module Directors
         next if enemy.expired
         distance = bullet.position.distance_to(enemy.position)
         if distance < 0.2
-          puts "Hit!"
+          puts 'Hit!'
           bullet.expired = true
           enemy.expired = true
         end
