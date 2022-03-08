@@ -1,7 +1,8 @@
 require 'mittsu'
-#実験　ああ
-Dir.glob("lib/*.rb") {|path| require_relative path }
-Dir.glob("directors/*.rb") {|path| require_relative path }
+
+# lib, directors下のrbファイルを全てrequire_relative
+Dir.glob('lib/*.rb') { |path| require_relative path }
+Dir.glob('directors/*.rb') { |path| require_relative path }
 
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 768
@@ -15,23 +16,26 @@ director = Directors::TitleDirector.new(screen_width: SCREEN_WIDTH, screen_heigh
 
 # キー押下時のイベントハンドラを登録
 renderer.window.on_key_pressed do |glfw_key|
-	director.on_key_pressed(glfw_key: glfw_key)
+  # director内部で、複数のシーンを作成しておき、
+  # 現在指しているシーンのdirector.on_key_pressedを実行させる
+  director.on_key_pressed(glfw_key: glfw_key)
 end
 
 # メインループ
 renderer.window.run do
-	# 現在のディレクターオブジェクトに、処理対象となるディレクターオブジェクトを返させる
-	# ※ これによって、シーン切替を実現している。メカニズムの詳細はdirectors/base.rb参照
-	director = director.current_director
+  # 現在のディレクターオブジェクトに、処理対象となるディレクターオブジェクトを返させる
+  # ※ これによって、シーン切替を実現している。メカニズムの詳細はdirectors/base.rb参照
+  director = director.current_director
 
-	# 処理対象のディレクターオブジェクトが返ってこない（nilが返ってくる）場合はメインループを抜ける
-	break unless director
+  # 処理対象のディレクターオブジェクトが返ってこない（nilが返ってくる）場合はメインループを抜ける
+  break unless director
 
-	# １フレーム分、最新のディレクターオブジェクトを進行させる
-	director.play
+  # １フレーム分、最新のディレクターオブジェクトを進行させる
+  director.play
 
-	# 現在のディレクターオブジェクトが保持するシーンを、同じく現在のディレクターオブジェクトが持つカメラでレンダリング
-	renderer.render(
-		director.scene,
-		director.camera)
+  # 現在のディレクターオブジェクトが保持するシーンを、同じく現在のディレクターオブジェクトが持つカメラでレンダリング
+  renderer.render(
+    director.scene,
+    director.camera
+  )
 end
