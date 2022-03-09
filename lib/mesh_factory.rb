@@ -40,7 +40,7 @@ class MeshFactory
     material = generate_material(
       :basic,
       nil,
-      TextureFactory.create_texture_map('sun.png'),
+      TextureFactory.create_texture_map('sun_cream.png'),
       nil
     )
     Mittsu::Mesh.new(geometry, material)
@@ -52,6 +52,14 @@ class MeshFactory
     material = Mittsu::MeshBasicMaterial.new(color: 0x333333)
     Mittsu::Mesh.new(geometry, material)
   end
+
+  # 照準の生成
+  def self.create_sight
+    geometry = Mittsu::RingGeometry.new(0.2, 0.4, 16, 4)
+    material = Mittsu::MeshBasicMaterial.new(color: 0xff0000)
+    Mittsu::Mesh.new(geometry, material)
+  end
+    
 
   # 汎用マテリアル生成メソッド
   def self.generate_material(type, color, map, normal_map)
