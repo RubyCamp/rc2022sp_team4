@@ -3,7 +3,7 @@ class Enemy
 	attr_accessor :mesh, :expired
 
 	# 初期化
-	def initialize(x: nil, y: nil, z: nil)
+	def initialize(x: nil, y: nil, z: nil, revol_radius:)
 		# 初期位置指定が無ければランダムに配置する
 		x ||= rand(10) / 10.0 - 0.5
 		y ||= 5
