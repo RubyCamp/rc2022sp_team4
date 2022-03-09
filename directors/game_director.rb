@@ -66,11 +66,11 @@ module Directors
       rejected_enemies.each { |enemy| self.scene.remove(enemy.mesh) }
 
       # 一定のフレーム数経過毎に敵キャラ(隕石)を出現させる
-      # if @frame_counter % 180 == 0
-      #   enemy = Enemy.new
-      #   @enemies << enemy
-      #   self.scene.add(enemy.mesh)
-      # end
+       if @frame_counter % 180 == 0
+        enemy = Enemy.new(revol_radius: Earth::DISTANCE)
+        @enemies << enemy
+         self.scene.add(enemy.mesh)
+       end
 
       @frame_counter += 1
 
