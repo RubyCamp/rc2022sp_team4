@@ -35,7 +35,7 @@ module Directors
       @cameras = [self.camera, Mittsu::PerspectiveCamera.new(self.camera.fov, self.camera.aspect, 0.1, 1000.0).tap { 
         |cmr|
         cmr.position.set(0, -4, 0) # yは-5以上
-        # self.camera.position.set(0, -8, 0) # 太陽で隠れて地球が見えん
+        # cmr.position.set(0, -8, 0) # 太陽で隠れて地球が見えん
         # 移動後のカメラ位置から、原点（[0, 0, 0]）を注視し直す
         cmr.look_at(Mittsu::Vector3.new(0, 0, 0))
       }]
@@ -66,11 +66,11 @@ module Directors
       rejected_enemies.each { |enemy| self.scene.remove(enemy.mesh) }
 
       # 一定のフレーム数経過毎に敵キャラ(隕石)を出現させる
-       if @frame_counter % 180 == 0
+      if @frame_counter % 180 == 0
         enemy = Enemy.new(revol_radius: Earth::DISTANCE)
         @enemies << enemy
-         self.scene.add(enemy.mesh)
-       end
+        self.scene.add(enemy.mesh)
+      end
 
       @frame_counter += 1
 
@@ -109,10 +109,7 @@ module Directors
       
       # 太陽(光)をセット
       # 太陽生成。
-      geometry = Mittsu::SphereGeometry.new(5, 64, 64)
-      material = Mittsu::MeshBasicMaterial.new(color: 0xf3911b)
-      @sun = Mittsu::Mesh.new(geometry, material)
-      # @sun = MeshFactory.create_sun
+      @sun = MeshFactory.create_sun
       @sun.position.set(0, 0, 0)
       self.scene.add(@sun)
       
