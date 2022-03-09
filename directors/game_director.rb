@@ -114,12 +114,12 @@ module Directors
       self.camera.position.set(0, 2, CAMERA_REVOLUTION)
       # 移動後のカメラ位置から、原点（[0, 0, 0]）を注視し直す
       self.camera.look_at(Mittsu::Vector3.new(0, 2, 0))
-      
+
       # 太陽生成。
       @sun = MeshFactory.create_sun
       @sun.position.set(0, 0, 0)
       self.scene.add(@sun)
-      
+
       # 太陽(光)をセット
       @sunlite = LightFactory.create_sun_light
       @sunlite.position.set(0, 0, 0)
