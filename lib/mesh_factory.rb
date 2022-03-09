@@ -40,7 +40,8 @@ class MeshFactory
     material = generate_material(
       :phong,
       nil,
-      TextureFactory.create_texture_map('sun.png')
+      TextureFactory.create_texture_map('sun.png'), 
+      nil
     )
     Mittsu::Mesh.new(geometry, material)
   end

@@ -18,6 +18,11 @@ class Earth
 #     DISTANCE
 #   end
 
+# メッシュの現在位置を返す
+def position
+  self.mesh.position
+end
+
   # １フレーム分の進行処理
   def play(speed_level: 1)
     self.mesh.position.x = DISTANCE * Math.sin(@forwarded_frame_count * speed_level / 5.0 * 0.1)
