@@ -82,22 +82,38 @@ module Directors
       # self.camera.position.x = Math.sin(@camera_rad * -CAMERA_ROTATE_SPEED_X)  if self.renderer.window.key_down?(GLFW_KEY_DOWN)
       current_director.send(@camera_fu_key_left [@camera_keys.first]) if self.renderer.window.key_down?(GLFW_KEY_LEFT)
       current_director.send(@camera_fu_key_right[@camera_keys.first]) if self.renderer.window.key_down?(GLFW_KEY_RIGHT)
+
+      current_director.send(@camera_fu_key_left [@camera_keys.last]) if self.renderer.window.key_down?(GLFW_KEY_J)
+      current_director.send(@camera_fu_key_right[@camera_keys.last]) if self.renderer.window.key_down?(GLFW_KEY_L)
     end
 
     def sun_camera_left
       p 'sun_camera_left'
+      self.camera.position.z = Math.cos(@camera_rad * CAMERA_ROTATE_SPEED_Y)  if self.renderer.window.key_down?(GLFW_KEY_LEFT)
+      self.camera.look_at(Mittsu::Vector3.new(0, 2, 0))
+      @camera_rad += 1
     end
 
     def revol_camera_left
       p 'revol_camera_left'
+      self.camera.position.z = Math.cos(@camera_rad * CAMERA_ROTATE_SPEED_Y)  if self.renderer.window.key_down?(GLFW_KEY_J)
+      self.camera.look_at(Mittsu::Vector3.new(0, 2, 0))
+      @camera_rad += 1
     end
 
     def sun_camera_right
       p 'sun_camera_right'
+      self.camera.position.z = Math.cos(@camera_rad * CAMERA_ROTATE_SPEED_Y)  if self.renderer.window.key_down?(GLFW_KEY_RIGHT)
+      self.camera.look_at(Mittsu::Vector3.new(0, 2, 0))
+      @camera_rad += 1
     end
 
     def revol_camera_right
       p 'revol_camera_right'
+      # self.camera.position.z = Math.cos(@camera_rad * CAMERA_ROTATE_SPEED_Y)  if self.renderer.window.key_down?(GLFW_KEY_J)
+      self.camera.position.z = Math.cos(@camera_rad * -CAMERA_ROTATE_SPEED_Y)  if self.renderer.window.key_down?(GLFW_KEY_L)
+      self.camera.look_at(Mittsu::Vector3.new(0, 2, 0))
+      @camera_rad += 1
     end
 
     # キー押下（単発）時のハンドリング
