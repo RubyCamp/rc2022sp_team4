@@ -98,6 +98,10 @@ module Directors
 
     def revol_camera_right
       p 'revol_camera_right'
+      # self.camera.position.x += Math.sin(@camera_rad * CAMERA_ROTATE_SPEED_X)   if self.renderer.window.key_down?(GLFW_KEY_UP)
+      # self.camera.position.x += Math.sin(@camera_rad * -CAMERA_ROTATE_SPEED_X)  if self.renderer.window.key_down?(GLFW_KEY_DOWN)
+      self.camera.position.z = Math.cos(@camera_rad * CAMERA_ROTATE_SPEED_Y)  if self.renderer.window.key_down?(GLFW_KEY_LEFT)
+      self.camera.position.z = Math.cos(@camera_rad * -CAMERA_ROTATE_SPEED_Y)  if self.renderer.window.key_down?(GLFW_KEY_RIGHT)
     end
 
     # キー押下（単発）時のハンドリング
@@ -115,6 +119,14 @@ module Directors
         self.camera = @cameras[@camera_keys.reverse!.first]
         # rendererの再設定
         renderer.render(self.scene, self.camera)
+        # ESCキー押下でエンディングに無理やり遷移
+        when GLFW_KEY_ESCAPE
+          puts 'シーン遷移 → EndingDirector'
+          transition_to_next_director
+          
+        # SPACEキー押下で弾丸を発射
+        when GLFW_KEY_SPACE
+          shoot
       end
     end
 
@@ -125,6 +137,9 @@ module Directors
       self.camera.position.set(0, 2, 15)
       # 移動後のカメラ位置から、原点（[0, 0, 0]）を注視し直す
       self.camera.look_at(Mittsu::Vector3.new(0, 2, 0))
+      # self.camera = Mittsu::PerspectiveCamera.new(75.0, aspect, 0.1, 1000.0)
+      #初期座標変更
+      self.camera.position.set(0, 4, 20)
       
       # 太陽生成。
       @sun = MeshFactory.create_sun
@@ -141,6 +156,7 @@ module Directors
       self.scene.add(@earth.mesh)
 
       # 地球の公転軌道を描く
+
       revolution = MeshFactory.create_revol
       revolution.position.y = @earth.position.y
       revolution.rotation.x = Math::PI / 2.0
