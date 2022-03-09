@@ -38,9 +38,10 @@ class MeshFactory
   def self.create_sun
     geometry = Mittsu::SphereGeometry.new(5, 64, 64)
     material = generate_material(
-      :phong,
+      :basic,
       nil,
-      TextureFactory.create_texture_map('sun.png')
+      TextureFactory.create_texture_map('sun.png'),
+      TextureFactory.create_normal_map(nil)
     )
     Mittsu::Mesh.new(geometry, material)
   end
