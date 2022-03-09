@@ -8,8 +8,8 @@ class MeshFactory
     Mittsu::Mesh.new(geometry, material)
   end
 
-  # 敵キャラクタの生成
-  def self.create_enemy(r: 0.1, div_w: 16, div_h: 16, color: nil, map: nil, normal_map: nil)
+  # 敵キャラクタ(隕石)の生成
+  def self.create_enemy(r: 0.5, div_w: 16, div_h: 16, color: nil, map: nil, normal_map: nil)
     geometry = Mittsu::SphereGeometry.new(r, div_w, div_h)
     material = generate_material(:basic, color, map, normal_map)
     Mittsu::Mesh.new(geometry, material)
@@ -37,7 +37,18 @@ class MeshFactory
   # 太陽の生成
   def self.create_sun
     geometry = Mittsu::SphereGeometry.new(5, 64, 64)
-    material = Mittsu::MeshBasicMaterial.new(color: 0xf3911b)
+    material = generate_material(
+      :phong,
+      nil,
+      TextureFactory.create_texture_map('sun.png')
+    )
+    Mittsu::Mesh.new(geometry, material)
+  end
+
+  # 軌道の生成
+  def self.create_revol
+    geometry = Mittsu::RingGeometry.new(Earth::DISTANCE - 0.05, Earth::DISTANCE + 0.05, 32, 4)
+    material = Mittsu::MeshBasicMaterial.new(color: 0x333333)
     Mittsu::Mesh.new(geometry, material)
   end
 
