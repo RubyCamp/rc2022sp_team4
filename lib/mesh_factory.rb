@@ -59,7 +59,6 @@ class MeshFactory
     material = Mittsu::MeshBasicMaterial.new(color: 0xff0000)
     Mittsu::Mesh.new(geometry, material)
   end
-    
 
   # 汎用マテリアル生成メソッド
   def self.generate_material(type, color, map, normal_map)
