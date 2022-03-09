@@ -82,6 +82,9 @@ module Directors
       # self.camera.position.x = Math.sin(@camera_rad * -CAMERA_ROTATE_SPEED_X)  if self.renderer.window.key_down?(GLFW_KEY_DOWN)
       current_director.send(@camera_fu_key_left [@camera_keys.first]) if self.renderer.window.key_down?(GLFW_KEY_LEFT)
       current_director.send(@camera_fu_key_right[@camera_keys.first]) if self.renderer.window.key_down?(GLFW_KEY_RIGHT)
+
+      current_director.send(@camera_fu_key_left [@camera_keys.last]) if self.renderer.window.key_down?(GLFW_KEY_1)
+      current_director.send(@camera_fu_key_right[@camera_keys.last]) if self.renderer.window.key_down?(GLFW_KEY_2)
     end
 
     def sun_camera_left
@@ -98,10 +101,13 @@ module Directors
 
     def revol_camera_right
       p 'revol_camera_right'
+      puts self.camera.position.z
       # self.camera.position.x += Math.sin(@camera_rad * CAMERA_ROTATE_SPEED_X)   if self.renderer.window.key_down?(GLFW_KEY_UP)
       # self.camera.position.x += Math.sin(@camera_rad * -CAMERA_ROTATE_SPEED_X)  if self.renderer.window.key_down?(GLFW_KEY_DOWN)
-      self.camera.position.z = Math.cos(@camera_rad * CAMERA_ROTATE_SPEED_Y)  if self.renderer.window.key_down?(GLFW_KEY_LEFT)
-      self.camera.position.z = Math.cos(@camera_rad * -CAMERA_ROTATE_SPEED_Y)  if self.renderer.window.key_down?(GLFW_KEY_RIGHT)
+      self.camera.position.z = Math.cos(@camera_rad * CAMERA_ROTATE_SPEED_Y)  if self.renderer.window.key_down?(GLFW_KEY_1)
+      self.camera.position.z = Math.cos(@camera_rad * -CAMERA_ROTATE_SPEED_Y)  if self.renderer.window.key_down?(GLFW_KEY_2)
+      self.camera.look_at(Mittsu::Vector3.new(0, 2, 0))
+      @camera_rad += 1
     end
 
     # キー押下（単発）時のハンドリング
@@ -119,6 +125,7 @@ module Directors
         self.camera = @cameras[@camera_keys.reverse!.first]
         # rendererの再設定
         renderer.render(self.scene, self.camera)
+
         # ESCキー押下でエンディングに無理やり遷移
         when GLFW_KEY_ESCAPE
           puts 'シーン遷移 → EndingDirector'
