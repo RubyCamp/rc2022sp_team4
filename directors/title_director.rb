@@ -75,7 +75,7 @@ module Directors
       @description2.mesh.position.z = -0.5
       self.scene.add(@description2.mesh)
 
-      #self.scene.remove(@description2.mesh)
+      # self.scene.remove(@description2.mesh)
 
       # until GLFW_KEY_SPACE do
       #   if  @frame_counter >=1
