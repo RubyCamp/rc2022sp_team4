@@ -1,4 +1,5 @@
 require_relative 'base'
+# require_relative '../lib/move_camera'
 
 module Directors
   # ゲーム本編のディレクター
@@ -33,6 +34,8 @@ module Directors
 
       # 公転カメラと太陽カメラ
       @camera_keys = %i[sun_camera revol_camera]
+      @camera_fu_key_up = { sun_camera: :sun_camera_up, revol_camera: :revol_camera_up }
+      @camera_fu_key_down = { sun_camera: :sun_camera_down, revol_camera: :revol_camera_down }
       @camera_fu_key_left = { sun_camera: :sun_camera_left, revol_camera: :revol_camera_left }
       @camera_fu_key_right = { sun_camera: :sun_camera_right, revol_camera: :revol_camera_right }
       @cameras = { sun_camera: self.camera, revol_camera: Mittsu::PerspectiveCamera.new(self.camera.fov, self.camera.aspect, 0.1, 1000.0).tap { 
@@ -69,7 +72,7 @@ module Directors
       rejected_enemies.each { |enemy| self.scene.remove(enemy.mesh) }
 
       # 一定のフレーム数経過毎に敵キャラ(隕石)を出現させる
-      if @frame_counter % 180 == 0
+      if (@frame_counter % 180).zero?
         enemy = Enemy.new(revol_radius: Earth::DISTANCE)
         @enemies << enemy
         self.scene.add(enemy.mesh)
@@ -77,27 +80,11 @@ module Directors
 
       @frame_counter += 1
 
-      # カメラ回転(バグ発生中)
-      # self.camera.position.x = Math.sin(@camera_rad * CAMERA_ROTATE_SPEED_X)   if self.renderer.window.key_down?(GLFW_KEY_UP)
-      # self.camera.position.x = Math.sin(@camera_rad * -CAMERA_ROTATE_SPEED_X)  if self.renderer.window.key_down?(GLFW_KEY_DOWN)
-      current_director.send(@camera_fu_key_left [@camera_keys.first]) if self.renderer.window.key_down?(GLFW_KEY_LEFT)
-      current_director.send(@camera_fu_key_right[@camera_keys.first]) if self.renderer.window.key_down?(GLFW_KEY_RIGHT)
-    end
-
-    def sun_camera_left
-      p 'sun_camera_left'
-    end
-
-    def revol_camera_left
-      p 'revol_camera_left'
-    end
-
-    def sun_camera_right
-      p 'sun_camera_right'
-    end
-
-    def revol_camera_right
-      p 'revol_camera_right'
+      # カメラ回転、照準器移動
+      MoveCamera.send(@camera_fu_key_up   [@camera_keys.first], self.camera, @sight) if self.renderer.window.key_down?(GLFW_KEY_UP)
+      MoveCamera.send(@camera_fu_key_down [@camera_keys.first], self.camera, @sight) if self.renderer.window.key_down?(GLFW_KEY_DOWN)
+      MoveCamera.send(@camera_fu_key_left [@camera_keys.first], self.camera, @sight) if self.renderer.window.key_down?(GLFW_KEY_LEFT)
+      MoveCamera.send(@camera_fu_key_right[@camera_keys.first], self.camera, @sight) if self.renderer.window.key_down?(GLFW_KEY_RIGHT)
     end
 
     # キー押下（単発）時のハンドリング
@@ -145,6 +132,18 @@ module Directors
       revolution.position.y = @earth.position.y
       revolution.rotation.x = Math::PI / 2.0
       self.scene.add(revolution)
+
+      # 照準設定
+      geometry = Mittsu::RingGeometry.new(0.2, 0.4, 16, 4)
+      material = Mittsu::MeshBasicMaterial.new(color: 0xff0000)
+      @sight = Mittsu::Mesh.new(geometry, material)
+      # @sight = MeshFactory.create_revol
+      @sight.position = self.camera.position.clone.normalize.tap { |pos|
+        pos.x *= -Earth::DISTANCE
+        pos.z *= -Earth::DISTANCE
+        pos.y = @earth.position.y
+      }
+      self.scene.add(@sight)
     end
 
     # 弾丸発射
