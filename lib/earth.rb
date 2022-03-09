@@ -13,10 +13,10 @@ class Earth
     @forwarded_frame_count = 0 # 何フレーム分進行したかを記憶するカウンタ
   end
 
-  # 地球の公転半径を返す
-#   def self.revol_radius
-#     DISTANCE
-#   end
+  # メッシュの現在位置を返す
+  def position
+    self.mesh.position
+  end
 
   # １フレーム分の進行処理
   def play(speed_level: 1)
