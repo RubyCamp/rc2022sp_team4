@@ -2,7 +2,7 @@
 # 同じテクスチャを毎回ロードし直さないよう、キャッシングを有効にしている点に注意
 class TextureFactory
   # 1文字を表すテクスチャマップの生成
-  def self.create_string(char)
+  def self.create_score(char)
     @@char_textures ||= {}
     @@char_textures[char] ||= Mittsu::ImageUtils.load_texture("images/number_#{char}.png")
     @@char_textures[char]
