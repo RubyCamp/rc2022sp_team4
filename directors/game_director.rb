@@ -32,13 +32,16 @@ module Directors
       @camera_rad = 0
 
       # 公転カメラと太陽カメラ
-      @cameras = [self.camera, Mittsu::PerspectiveCamera.new(self.camera.fov, self.camera.aspect, 0.1, 1000.0).tap { 
+      @camera_keys = %i[sun_camera revol_camera]
+      @camera_fu_key_left = { sun_camera: :sun_camera_left, revol_camera: :revol_camera_left }
+      @camera_fu_key_right = { sun_camera: :sun_camera_right, revol_camera: :revol_camera_right }
+      @cameras = { sun_camera: self.camera, revol_camera: Mittsu::PerspectiveCamera.new(self.camera.fov, self.camera.aspect, 0.1, 1000.0).tap { 
         |cmr|
         cmr.position.set(0, -4, 0) # yは-5以上
         # cmr.position.set(0, -8, 0) # 太陽で隠れて地球が見えん
         # 移動後のカメラ位置から、原点（[0, 0, 0]）を注視し直す
         cmr.look_at(Mittsu::Vector3.new(0, 0, 0))
-      }]
+      } }
     end
 
     # １フレーム分の進行処理
@@ -77,8 +80,24 @@ module Directors
       # カメラ回転(バグ発生中)
       # self.camera.position.x = Math.sin(@camera_rad * CAMERA_ROTATE_SPEED_X)   if self.renderer.window.key_down?(GLFW_KEY_UP)
       # self.camera.position.x = Math.sin(@camera_rad * -CAMERA_ROTATE_SPEED_X)  if self.renderer.window.key_down?(GLFW_KEY_DOWN)
-      # self.camera.position.z = Math.cos(@camera_rad * CAMERA_ROTATE_SPEED_Y)   if self.renderer.window.key_down?(GLFW_KEY_LEFT)
-      # self.camera.position.z = Math.cos(@camera_rad * -CAMERA_ROTATE_SPEED_Y)  if self.renderer.window.key_down?(GLFW_KEY_RIGHT)
+      current_director.send(@camera_fu_key_left [@camera_keys.first]) if self.renderer.window.key_down?(GLFW_KEY_LEFT)
+      current_director.send(@camera_fu_key_right[@camera_keys.first]) if self.renderer.window.key_down?(GLFW_KEY_RIGHT)
+    end
+
+    def sun_camera_left
+      p 'sun_camera_left'
+    end
+
+    def revol_camera_left
+      p 'revol_camera_left'
+    end
+
+    def sun_camera_right
+      p 'sun_camera_right'
+    end
+
+    def revol_camera_right
+      p 'revol_camera_right'
     end
 
     # キー押下（単発）時のハンドリング
@@ -93,9 +112,9 @@ module Directors
         shoot
       when GLFW_KEY_Z, GLFW_KEY_A
         # 2要素だけだし、reverseで
-        self.camera = @cameras.reverse!.first
+        self.camera = @cameras[@camera_keys.reverse!.first]
         # rendererの再設定
-        renderer.render( self.scene, self.camera )
+        renderer.render(self.scene, self.camera)
       end
     end
 
@@ -103,16 +122,16 @@ module Directors
 
     # ゲーム本編の登場オブジェクト群を生成
     def create_objects
-      self.camera.position.set(0, -1, 20)
+      self.camera.position.set(0, 2, 15)
       # 移動後のカメラ位置から、原点（[0, 0, 0]）を注視し直す
-      self.camera.look_at(Mittsu::Vector3.new(0, 0, 0))
+      self.camera.look_at(Mittsu::Vector3.new(0, 2, 0))
       
-      # 太陽(光)をセット
       # 太陽生成。
       @sun = MeshFactory.create_sun
       @sun.position.set(0, 0, 0)
       self.scene.add(@sun)
       
+      # 太陽(光)をセット
       @sunlite = LightFactory.create_sun_light
       @sunlite.position.set(0, 0, 0)
       self.scene.add(@sunlite)
@@ -120,6 +139,12 @@ module Directors
       # 地球を作成し、カメラ位置（原点）に対して大気圏を飛行してるっぽく見える位置に移動させる
       @earth = Earth.new
       self.scene.add(@earth.mesh)
+
+      # 地球の公転軌道を描く
+      revolution = MeshFactory.create_revol
+      revolution.position.y = @earth.position.y
+      revolution.rotation.x = Math::PI / 2.0
+      self.scene.add(revolution)
     end
 
     # 弾丸発射
