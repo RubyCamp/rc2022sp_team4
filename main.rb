@@ -1,4 +1,5 @@
 require 'mittsu'
+#丸矢です
 
 # lib, directors下のrbファイルを全てrequire_relative
 Dir.glob('lib/*.rb') { |path| require_relative path }

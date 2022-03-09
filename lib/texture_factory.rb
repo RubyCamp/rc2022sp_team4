@@ -4,7 +4,7 @@ class TextureFactory
 	# 1文字を表すテクスチャマップの生成
 	def self.create_string(char)
 		@@char_textures ||= {}
-		@@char_textures[char] ||= Mittsu::ImageUtils.load_texture("images/string_#{char}.png")
+		@@char_textures[char] ||= Mittsu::ImageUtils.load_texture("images/number_#{char}.png")
 		@@char_textures[char]
 	end
 
@@ -22,9 +22,13 @@ class TextureFactory
 		@@normals[filename]
 	end
 
-	# タイトル画面の説明用文字列テクスチャを生成
+	# タイトルのテクスチャを生成
 	def self.create_title_description
 		Mittsu::ImageUtils.load_texture("images/title_description.png")
+	end
+	# press to space のテクスチャを生成
+	def self.create_press_button
+		Mittsu::ImageUtils.load_texture("images/press_button.png")
 	end
 
 	# エンディング画面の説明用文字列テクスチャを生成
