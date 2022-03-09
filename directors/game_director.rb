@@ -38,13 +38,13 @@ module Directors
       @camera_fu_key_down = { sun_camera: :sun_camera_down, revol_camera: :revol_camera_down }
       @camera_fu_key_left = { sun_camera: :sun_camera_left, revol_camera: :revol_camera_left }
       @camera_fu_key_right = { sun_camera: :sun_camera_right, revol_camera: :revol_camera_right }
-      @cameras = { sun_camera: self.camera, revol_camera: Mittsu::PerspectiveCamera.new(self.camera.fov, self.camera.aspect, 0.1, 1000.0).tap { 
+      @cameras = { sun_camera: self.camera, revol_camera: Mittsu::PerspectiveCamera.new(self.camera.fov, self.camera.aspect, 0.1, 1000.0).tap do 
         |cmr|
         cmr.position.set(0, -4, 0) # yは-5以上
         # cmr.position.set(0, -8, 0) # 太陽で隠れて地球が見えん
         # 移動後のカメラ位置から、原点（[0, 0, 0]）を注視し直す
         cmr.look_at(Mittsu::Vector3.new(0, 0, 0))
-      } }
+      end }
     end
 
     # １フレーム分の進行処理
@@ -134,15 +134,12 @@ module Directors
       self.scene.add(revolution)
 
       # 照準設定
-      geometry = Mittsu::RingGeometry.new(0.2, 0.4, 16, 4)
-      material = Mittsu::MeshBasicMaterial.new(color: 0xff0000)
-      @sight = Mittsu::Mesh.new(geometry, material)
-      # @sight = MeshFactory.create_revol
-      @sight.position = self.camera.position.clone.normalize.tap { |pos|
+      @sight = MeshFactory.create_sight
+      @sight.position = self.camera.position.clone.normalize.tap do |pos|
         pos.x *= -Earth::DISTANCE
         pos.z *= -Earth::DISTANCE
         pos.y = @earth.position.y
-      }
+      end
       self.scene.add(@sight)
     end
 
