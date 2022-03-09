@@ -38,7 +38,7 @@ class MeshFactory
   def self.create_sun
     geometry = Mittsu::SphereGeometry.new(5, 64, 64)
     material = Mittsu::MeshBasicMaterial.new(color: 0xf3911b)
-    @sun = Mittsu::Mesh.new(geometry, material)
+    Mittsu::Mesh.new(geometry, material)
   end
 
   # 汎用マテリアル生成メソッド
