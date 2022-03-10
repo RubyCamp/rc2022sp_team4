@@ -36,6 +36,12 @@ module Directors
       when GLFW_KEY_SPACE
         puts 'シーン遷移 → GameDirector'
         @@start_time = Time.now
+        @@game_kind = :normal
+        transition_to_next_director
+      when GLFW_KEY_ENTER
+        puts 'シーン遷移 → GameDirector(Don\'t shoot to the Earth)'
+        @@start_time = Time.now
+        @@game_kind = :shoot_earth
         transition_to_next_director
       end
     end

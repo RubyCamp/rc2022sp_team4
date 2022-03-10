@@ -66,7 +66,7 @@ module Directors
       # 各弾丸について当たり判定実施
       @bullets.each { |bullet| hit_any_enemies(bullet) }
       
-      hit_earth
+      enemy_hit_earth
 
       # 消滅済みの弾丸及び敵を配列とシーンから除去(わざと複雑っぽく記述しています)
       rejected_bullets = []
@@ -90,6 +90,8 @@ module Directors
       event_occur.each do |key|
         MoveCamera.send(@camera_keys.first.to_s + key[8..].downcase, self.camera, @sight) if self.renderer.window.key_down?(eval(key))
       end
+
+      bullet_hit_earth if @@game_kind == :shoot_earth
     end
 
     # キー押下（単発）時のハンドリング
@@ -97,6 +99,7 @@ module Directors
       case glfw_key
       # ESCキー押下でエンディングに無理やり遷移
       when GLFW_KEY_ESCAPE
+        puts 'You shot to the Earth!'
         puts 'シーン遷移 → EndingDirector'
         @@exec_time = Time.now - @@start_time
         transition_to_next_director
@@ -158,7 +161,19 @@ module Directors
     end
 
     # 地球と隕石の当たり判定
-    def hit_earth
+    def bullet_hit_earth
+      @bullets.each do |bullet|
+        distance_earth = @earth.position.distance_to(bullet.position)
+        if distance_earth < 1.4
+          puts 'シーン遷移 → EndingDirector'
+          @@exec_time = Time.now - @@start_time
+          transition_to_next_director
+        end
+      end
+    end
+
+    # 地球と弾丸の当たり判定
+    def enemy_hit_earth
       @enemies.each do |enemy|
         distance_earth = @earth.position.distance_to(enemy.position)
         if distance_earth < 1.4

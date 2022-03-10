@@ -2,7 +2,8 @@ module Directors
   # ディレクターの共通クラス
   class Base
     attr_accessor :scene, :camera, :renderer, :current_director, :next_director, :screen_width, :screen_height
-    @@start_time = @@exec_time = Time.now # 継承したクラスで参照するため基底クラスで一度作成しないといけない
+    @@start_time = @@exec_time = nil # 継承したクラスで参照するため基底クラスで一度作成しないといけない
+    @@game_kind = nil
 
     # 初期化
     def initialize(screen_width:, screen_height:, renderer:, fov: 75.0)
