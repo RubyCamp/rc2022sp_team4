@@ -4,7 +4,7 @@ class Enemy
   FRAME_COUNT_UPPER_LIMIT = 10 * 60
 
   # 初期化
-  def initialize(x: nil, y: nil, z: nil, revol_radius:)
+  def initialize(x: nil, y: nil, z: nil)
     # 初期位置指定が無ければランダムに配置する
     x ||= rand(10) / 10.0 - 0.5
     y ||= 20
@@ -13,9 +13,9 @@ class Enemy
     self.mesh = MeshFactory.create_enemy(r: 0.2, color: 0x00ff00)
     self.mesh.position = pos
     @speed = 0.1
-    @time = (y - 8) / @speed
-    @vector_x = (revol_radius * Math.sin(rand * 2 * Math::PI) - x) / @time
-    @vector_z = (revol_radius * Math.cos(rand * 2 * Math::PI) - z) / @time
+    @time = (y - Earth::DEFAULT_POSITION_Y) / @speed
+    @vector_x = (Earth::REVOL_RADIUS * Math.sin(rand * 2 * Math::PI) - x) / @time
+    @vector_z = (Earth::REVOL_RADIUS * Math.cos(rand * 2 * Math::PI) - z) / @time
     @forwarded_frame_count = 0 # 何フレーム分進行したかを記憶するカウンタ
     self.expired = false
   end
