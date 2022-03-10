@@ -15,9 +15,6 @@ module Directors
       # ゲーム本編の次に遷移するシーンのディレクターオブジェクトを用意
       self.next_director = EndingDirector.new(screen_width: screen_width, screen_height: screen_height, renderer: renderer)
 
-      # ゲーム本編の登場オブジェクト群を生成
-      create_objects
-
       # 弾丸の詰め合わせ用配列
       @bullets = []
 
@@ -30,15 +27,8 @@ module Directors
       @camera_rotate_x = 0.0
       @camera_rotate_y = 0.0
 
-      # camera radian
-      @camera_rad = 0
-
       # 公転カメラと太陽カメラ
-      @camera_keys = %i[revol_camera sun_camera]
-      @camera_fu_key_up = { sun_camera: :sun_camera_up, revol_camera: :revol_camera_up }
-      @camera_fu_key_down = { sun_camera: :sun_camera_down, revol_camera: :revol_camera_down }
-      @camera_fu_key_left = { sun_camera: :sun_camera_left, revol_camera: :revol_camera_left }
-      @camera_fu_key_right = { sun_camera: :sun_camera_right, revol_camera: :revol_camera_right }
+      @camera_keys = %i[sun_camera revol_camera]
       @cameras = { sun_camera: Mittsu::PerspectiveCamera.new(self.camera.fov, self.camera.aspect, 0.1, 1000.0).tap do
         |cmr|
         cmr.position.set(0, -2, 0) # yは-5以上
@@ -46,6 +36,14 @@ module Directors
         # 移動後のカメラ位置から、原点（[0, 0, 0]）を注視し直す
         cmr.look_at(Mittsu::Vector3.new(0, 0, 0))
       end, revol_camera: self.camera }
+
+      # 現在公転カメラ
+      self.camera.position.set(0, 2, CAMERA_REVOLUTION)
+      # 移動後のカメラ位置から、原点（[0, 0, 0]）を注視し直す
+      self.camera.look_at(Mittsu::Vector3.new(0, 2, 0))
+
+      # ゲーム本編の登場オブジェクト群を生成
+      create_objects
     end
 
     # １フレーム分の進行処理
@@ -82,10 +80,10 @@ module Directors
       @frame_counter += 1
 
       # カメラ回転、照準器移動
-      MoveCamera.send(@camera_fu_key_up   [@camera_keys.first], self.camera, @sight) if self.renderer.window.key_down?(GLFW_KEY_UP)
-      MoveCamera.send(@camera_fu_key_down [@camera_keys.first], self.camera, @sight) if self.renderer.window.key_down?(GLFW_KEY_DOWN)
-      MoveCamera.send(@camera_fu_key_left [@camera_keys.first], self.camera, @sight) if self.renderer.window.key_down?(GLFW_KEY_LEFT)
-      MoveCamera.send(@camera_fu_key_right[@camera_keys.first], self.camera, @sight) if self.renderer.window.key_down?(GLFW_KEY_RIGHT)
+      event_occur = %w[GLFW_KEY_Q GLFW_KEY_E GLFW_KEY_UP GLFW_KEY_DOWN GLFW_KEY_LEFT GLFW_KEY_RIGHT]
+      event_occur.each do |key|
+        MoveCamera.send(@camera_keys.first.to_s + key[8..].downcase, self.camera, @sight) if self.renderer.window.key_down?(eval(key))
+      end
     end
 
     # キー押下（単発）時のハンドリング
@@ -111,9 +109,8 @@ module Directors
 
     # ゲーム本編の登場オブジェクト群を生成
     def create_objects
-      self.camera.position.set(0, 2, CAMERA_REVOLUTION)
-      # 移動後のカメラ位置から、原点（[0, 0, 0]）を注視し直す
-      self.camera.look_at(Mittsu::Vector3.new(0, 2, 0))
+      # カメラの設定
+      self.camera = @cameras[@camera_keys.first]
 
       # 太陽生成。
       @sun = MeshFactory.create_sun
