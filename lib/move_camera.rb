@@ -50,6 +50,7 @@ class MoveCamera
   end
 
   def self.revol_camera_up(_, sight)
+<<<<<<< HEAD
     return if sight.position.x >= 7
     sight.position.x += SIGHT_SPEED
   end
@@ -57,5 +58,12 @@ class MoveCamera
   def self.revol_camera_down(_, sight)
     return if sight.position.x <= -7
     sight.position.x -= SIGHT_SPEED
+=======
+    sight.position.z += SIGHT_SPEED
+  end
+
+  def self.revol_camera_down(_, sight)
+    sight.position.z -= SIGHT_SPEED
+>>>>>>> 39ea0db (照準)
   end
 end
