@@ -7,9 +7,17 @@ class Bullet
 
   # 初期化
   # 進行方向を表す単位ベクトルを受領する
-  def initialize(forward_vector)
+  def initialize(sight_pos)
     self.mesh = MeshFactory.create_bullet(r: 0.02, color: 0xff0000)
-    @forward_vector = forward_vector
+    x = y = z = 0
+    pos = Mittsu::Vector3.new(x, y, z)
+    self.mesh.position = pos
+    @speed = 0.1
+    @time = 8 / @speed
+    @vector_x = (sight_pos.pos.x - x) / @time
+    @vector_z = (revol_radius * Math.cos(rand * 2 * Math::PI) - z) / @time
+
+    @forward_vector = sight_pos
     @forwarded_frame_count = 0 # 何フレーム分進行したかを記憶するカウンタ
     self.expired = false
   end

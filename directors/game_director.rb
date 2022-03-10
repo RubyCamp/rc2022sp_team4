@@ -146,12 +146,12 @@ module Directors
     # 弾丸発射
     def shoot
       # 現在カメラが向いている方向を進行方向とし、進行方向に対しBullet::SPEED分移動する単位単位ベクトルfを作成する
-      f = Mittsu::Vector4.new(0, 0, 1, 0)
-      f.apply_matrix4(self.camera.matrix).normalize
-      f.multiply_scalar(Bullet::SPEED)
+      # f = Mittsu::Vector4.new(0, 0, 1, 0)
+      # f.apply_matrix4(self.camera.matrix).normalize
+      # f.multiply_scalar(Bullet::SPEED)
 
       # 弾丸オブジェクト生成
-      bullet = Bullet.new(f)
+      bullet = Bullet.new(sight_pos: @sight.position)
       self.scene.add(bullet.mesh)
       @bullets << bullet
     end
