@@ -6,32 +6,26 @@ module Directors
     # 初期化
     def initialize(screen_width:, screen_height:, renderer:)
       super
-      
-
-      # ゲーム開始時刻の設定
-      
-
-      @create_ending_object= create_ending_object
-      
-      
+        @create_ending_object= create_ending_object
     end
 
     def create_ending_object()
       flag=true
       lambda do 
-      
         return if flag==false 
-       
         flag=false
+        #FINISHの文字のアニメーションパネル生成
         @description = AnimatedPanel.new(width: 1, height: 0.25, start_frame: 15, map: TextureFactory.create_ending_description)
         @description.mesh.position.z = -0.5
         @description.mesh.position.y = 0.2
         self.scene.add(@description.mesh)
 
+        #SCOREの文字のアニメーションパネル生成
         @description2 = AnimatedPanel.new(width: 0.25, height: 0.125, map: TextureFactory.create_ending_description_score)
         @description2.mesh.position.z = -0.5
         self.scene.add(@description2.mesh)
 
+        #Sの文字のアニメーションパネル生成
         @description3 = AnimatedPanel.new(map: TextureFactory.create_ending_second)
         @description3.mesh.position.z = -0.5
         @description3.mesh.position.x = 0.2
@@ -39,7 +33,8 @@ module Directors
         self.scene.add(@description3.mesh)
 
         start_x = -0.1
-  
+        
+        #秒数を最大3桁まで表示させるもの
         p "%03d" %  $exec_time.to_i
      
         ("%03d" %  $exec_time.to_i).chars.each_with_index do |char, idx|
@@ -62,7 +57,7 @@ module Directors
     def play
       # テキスト表示用パネルを1フレーム分アニメーションさせる
       
-
+      #flagの呼び出し
       @create_ending_object.call
       
       @description.play

@@ -36,4 +36,14 @@ class TextureFactory
   def self.create_ending_description
     Mittsu::ImageUtils.load_texture('images/ending_description.png')
   end
+
+  #エンディング画面のスコア表示テクスチャを生成
+  def self.create_ending_description_score
+    Mittsu::ImageUtils.load_texture('images/ending_score.png')
+  end
+
+  #エンディング画面のSのテクスチャを生成
+  def self.create_ending_second
+    Mittsu::ImageUtils.load_texture('images/second.png')
+  end
 end
