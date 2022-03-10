@@ -1,5 +1,4 @@
 require_relative 'base'
-# require_relative '../lib/move_camera'
 
 module Directors
   # ゲーム本編のディレクター
@@ -7,6 +6,7 @@ module Directors
     CAMERA_ROTATE_SPEED_X = 0.01
     CAMERA_ROTATE_SPEED_Y = 0.01
     CAMERA_REVOLUTION = 15
+    COOL_TIME = 5 # second
 
     # 初期化
     def initialize(screen_width:, screen_height:, renderer:)
@@ -44,12 +44,16 @@ module Directors
       # ゲーム本編の登場オブジェクト群を生成
       create_objects
 
-      @bullet_image=TextureFactory.create_texture_map('sun.png')
+      @bullet_image_cache = TextureFactory.create_texture_map('sun.png')
 
+      @initialize_cool_time_panel = initialize_cool_time_panel
     end
 
     # １フレーム分の進行処理
     def play
+      # クールタイムパネルの初期設定(一度だけ、クールタイムモードのみ実行)
+      @initialize_cool_time_panel.call
+
       # 地球を少しずつ回転させ、公転?してる雰囲気を醸し出す
       @earth.revolution(speed_level: 1)
       # ENTERキーでブースト
@@ -92,6 +96,7 @@ module Directors
       end
 
       bullet_hit_earth if @@game_kind == :shoot_earth
+      update_cool_time_panel if @@game_kind == :cool_time_shoot
     end
 
     # キー押下（単発）時のハンドリング
@@ -99,13 +104,12 @@ module Directors
       case glfw_key
       # ESCキー押下でエンディングに無理やり遷移
       when GLFW_KEY_ESCAPE
-        puts 'You shot to the Earth!'
         puts 'シーン遷移 → EndingDirector'
         @@exec_time = Time.now - @@start_time
         transition_to_next_director
       # SPACEキー押下で弾丸を発射
       when GLFW_KEY_SPACE
-        shoot
+        self.send(@shoot)
       when GLFW_KEY_Z, GLFW_KEY_A
         # 2要素だけだし、reverseで
         self.camera = @cameras[@camera_keys.reverse!.first]
@@ -155,16 +159,58 @@ module Directors
     # 弾丸発射
     def shoot
       # 弾丸オブジェクト生成 照準の位置を渡す
-      bullet = Bullet.new(@sight.position, @bullet_image)
+      bullet = Bullet.new(@sight.position, @bullet_image_cache)
       self.scene.add(bullet.mesh)
       @bullets << bullet
     end
 
-    # 地球と隕石の当たり判定
+    # デカ弾丸発射
+    def cool_time_shoot
+      return if (@cool_time_end - Time.now) > 0
+      # 弾丸オブジェクト生成 照準の位置を渡す
+      bullet = Bullet.new(@sight.position, @bullet_image_cache, 30.0)
+      self.scene.add(bullet.mesh)
+      @bullets << bullet
+      @cool_time_end = Time.now + COOL_TIME
+    end
+
+    def initialize_cool_time_panel
+      flag = false
+      lambda do
+        return if flag
+        @shoot = @@game_kind == :cool_time_shoot ? :cool_time_shoot : :shoot
+        return if flag = @@game_kind != :cool_time_shoot
+        flag = true
+
+        @cool_time_end = Time.now
+        @cool_time_panels = []
+        ('%02d' % [@cool_time_end - Time.now, 0].max).chars.each_with_index do |point, index|
+          material = Mittsu::SpriteMaterial.new(map: TextureFactory::create_score(point))
+          Mittsu::Sprite.new(material).tap do |sprite|
+            sprite.scale.set(6, 6, 1.0)
+            sprite.position.set(-15, 20, -13 - 6 * index)
+            self.scene.add(sprite)
+            @cool_time_panels << sprite
+          end
+        end
+      end
+    end
+
+    def update_cool_time_panel
+      ('%02d' % [@cool_time_end - Time.now, 0].max).chars.each_with_index do |point, index|
+        map = TextureFactory::create_score(point)
+        sprite = @cool_time_panels[index]
+        sprite.material.set_values(map: map)
+        material = Mittsu::SpriteMaterial.new(map: map)
+      end
+    end
+
+    # 地球と弾丸の当たり判定
     def bullet_hit_earth
       @bullets.each do |bullet|
         distance_earth = @earth.position.distance_to(bullet.position)
         if distance_earth < 1.4
+          puts 'You shot to the Earth!'
           puts 'シーン遷移 → EndingDirector'
           @@exec_time = Time.now - @@start_time
           transition_to_next_director
@@ -172,7 +218,7 @@ module Directors
       end
     end
 
-    # 地球と弾丸の当たり判定
+    # 地球と隕石の当たり判定
     def enemy_hit_earth
       @enemies.each do |enemy|
         distance_earth = @earth.position.distance_to(enemy.position)
@@ -191,9 +237,9 @@ module Directors
       @enemies.each do |enemy|
         next if enemy.expired
         distance_bullet = bullet.position.distance_to(enemy.position)
-        if distance_bullet < 0.8
+        if distance_bullet < 0.5 + bullet.radius
           puts 'Hit!'
-          bullet.expired = true
+          bullet.expired = true if bullet.radius <= 1 # デカ玉だったら削除しない
           enemy.expired = true
         end
       end

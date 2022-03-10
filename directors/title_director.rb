@@ -38,10 +38,16 @@ module Directors
         @@start_time = Time.now
         @@game_kind = :normal
         transition_to_next_director
+      # ENTERキー押下で地球に当てるとダメにする
       when GLFW_KEY_ENTER
         puts 'シーン遷移 → GameDirector(Don\'t shoot to the Earth)'
         @@start_time = Time.now
         @@game_kind = :shoot_earth
+        transition_to_next_director
+      when GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_LEFT_SHIFT
+        puts 'シーン遷移 → GameDirector(Can\'t always use shoot method)'
+        @@start_time = Time.now
+        @@game_kind = :cool_time_shoot
         transition_to_next_director
       end
     end

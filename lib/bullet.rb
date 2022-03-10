@@ -2,14 +2,15 @@
 class Bullet
   attr_accessor :mesh, :expired
 
-  SPEED = 0.7 # 弾丸の速度
-  FRAME_COUNT_UPPER_LIMIT = 3 * 60
+  SPEED = 2 # 弾丸の速度
+  FRAME_COUNT_UPPER_LIMIT = 10 * 60
 
   # 初期化
   # 進行方向を表す単位ベクトルを受領する
-  def initialize(sight_pos, bullet_image)
-    self.mesh = MeshFactory.create_bullet(r: 0.3, color: 0xff0000, map: bullet_image)
-    x = y = z = 0
+  def initialize(sight_pos, bullet_image, radius = 0.3)
+    self.mesh = MeshFactory.create_bullet(r: radius, color: 0xff0000, map: bullet_image)
+    x = z = 0
+    y = 3
     pos = Mittsu::Vector3.new(x, y, z)
     self.mesh.position = pos
     @speed = SPEED
@@ -20,6 +21,11 @@ class Bullet
     @forward_vector = sight_pos
     @forwarded_frame_count = 0 # 何フレーム分進行したかを記憶するカウンタ
     self.expired = false
+    @radius = radius
+  end
+
+  def radius
+    @radius
   end
 
   # メッシュの現在位置を返す
