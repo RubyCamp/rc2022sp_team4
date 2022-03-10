@@ -28,7 +28,7 @@ module Directors
       @description.play
       @description2.play
 
-      @frame_counter = 0
+ 
     end
 
     # キー押下（単発）時のハンドリング
@@ -37,6 +37,7 @@ module Directors
       # SPACEキー押下で弾丸を発射
       when GLFW_KEY_SPACE
         puts 'シーン遷移 → GameDirector'
+        $time_now = Time.now
         transition_to_next_director
       end
     end
@@ -65,7 +66,7 @@ module Directors
       # 説明文字列用のパネル作成
       # タイトル画面表示開始から180フレーム経過で表示するように調整
       # 位置は適当に決め打ち
-      @description = AnimatedPanel.new(width: 0.30, height: 0.25, start_frame: 180, map: TextureFactory.create_title_description)
+      @description = AnimatedPanel.new(width: 0.30, height: 0.25, start_frame: 90, map: TextureFactory.create_title_description)
       @description.mesh.position.y = 0.1
       @description.mesh.position.z = -0.5
       self.scene.add(@description.mesh)
