@@ -4,7 +4,6 @@ class MoveCamera
   @camera_move_count = 0
   
   def self.sun_camera_left(_, sight)
-    p 'sun_camera_left'
     if sight.position.z >= 9.5
       return sight.position.z
     end
@@ -12,7 +11,6 @@ class MoveCamera
   end
 
   def self.sun_camera_right(_, sight)
-    p 'sun_camera_right'
     if sight.position.z <= -9.5
       return sight.position.z
     end
@@ -20,7 +18,6 @@ class MoveCamera
   end
 
   def self.sun_camera_up(_, sight)
-    p 'sun_camera_up'
     if sight.position.x >= 7
       return sight.position.x
     end
@@ -28,7 +25,6 @@ class MoveCamera
   end
 
   def self.sun_camera_down(_, sight)
-    p 'sun_camera_down'
     if sight.position.x <= -7
       return sight.position.x
     end
