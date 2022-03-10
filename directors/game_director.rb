@@ -50,8 +50,7 @@ module Directors
       # 地球を少しずつ回転させ、公転?してる雰囲気を醸し出す
       @earth.revolution(speed_level: 1)
       # ENTERキーでブースト
-      @earth.play(speed_level: 1) if self.renderer.window.key_down?(GLFW_KEY_ENTER)
-      
+      @earth.revolution(speed_level: 1) if self.renderer.window.key_down?(GLFW_KEY_ENTER)
       #　地球の自転呼び出し
       @earth.spin
 
