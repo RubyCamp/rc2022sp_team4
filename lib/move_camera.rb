@@ -23,29 +23,19 @@ class MoveCamera
     sight.position.x -= SIGHT_SPEED
   end
 
-  def self.revol_camera_left(camera, sight)
-    @camera_move_count += 1
-    camera.position.x = Directors::GameDirector::CAMERA_REVOLUTION * Math.sin(@camera_move_count * Directors::GameDirector::CAMERA_ROTATE_SPEED_X)
-    camera.position.z = Directors::GameDirector::CAMERA_REVOLUTION * Math.cos(@camera_move_count * Directors::GameDirector::CAMERA_ROTATE_SPEED_Y)
-    camera.look_at(Mittsu::Vector3.new(0, 2, 0))
-    # sight.position = camera.position.clone.normalize.tap do |pos|
-    #   pos.x *= -Earth::DISTANCE
-    #   pos.z *= -Earth::DISTANCE
-    #   pos.y = sight.position.y
-    # end # カメラの向かい側
-    sight.position.z += SIGHT_SPEED
+  def self.sun_camera_q(_, sight)
   end
 
-  def self.revol_camera_right(camera, sight)
-    @camera_move_count -= 1
-    camera.position.x = Directors::GameDirector::CAMERA_REVOLUTION * Math.sin(@camera_move_count * Directors::GameDirector::CAMERA_ROTATE_SPEED_X)
-    camera.position.z = Directors::GameDirector::CAMERA_REVOLUTION * Math.cos(@camera_move_count * Directors::GameDirector::CAMERA_ROTATE_SPEED_Y)
-    camera.look_at(Mittsu::Vector3.new(0, 2, 0))
-    # sight.position = camera.position.clone.normalize.tap do |pos|
-    #   pos.x *= -Earth::DISTANCE
-    #   pos.z *= -Earth::DISTANCE
-    #   pos.y = sight.position.y
-    # end # カメラの向かい側
+  def self.sun_camera_e(_, sight)
+  end
+
+  def self.revol_camera_left(_, sight)
+    return if sight.position.x >= 7
+    sight.position.x += SIGHT_SPEED
+  end
+
+  def self.revol_camera_right(_, sight)
+    return if sight.position.x <= -7
     sight.position.x -= SIGHT_SPEED
   end
 
@@ -57,5 +47,29 @@ class MoveCamera
   def self.revol_camera_down(_, sight)
     return if sight.position.x <= -7
     sight.position.x -= SIGHT_SPEED
+  end
+
+  def self.revol_camera_q(camera, _)
+    @camera_move_count -= 1
+    camera.position.x = Directors::GameDirector::CAMERA_REVOLUTION * Math.sin(@camera_move_count * Directors::GameDirector::CAMERA_ROTATE_SPEED_X)
+    camera.position.z = Directors::GameDirector::CAMERA_REVOLUTION * Math.cos(@camera_move_count * Directors::GameDirector::CAMERA_ROTATE_SPEED_Y)
+    camera.look_at(Mittsu::Vector3.new(0, 2, 0))
+    # sight.position = camera.position.clone.normalize.tap do |pos|
+    #   pos.x *= -Earth::DISTANCE
+    #   pos.z *= -Earth::DISTANCE
+    #   pos.y = sight.position.y
+    # end # カメラの向かい側
+  end
+
+  def self.revol_camera_e(camera, _)
+    @camera_move_count += 1
+    camera.position.x = Directors::GameDirector::CAMERA_REVOLUTION * Math.sin(@camera_move_count * Directors::GameDirector::CAMERA_ROTATE_SPEED_X)
+    camera.position.z = Directors::GameDirector::CAMERA_REVOLUTION * Math.cos(@camera_move_count * Directors::GameDirector::CAMERA_ROTATE_SPEED_Y)
+    camera.look_at(Mittsu::Vector3.new(0, 2, 0))
+    # sight.position = camera.position.clone.normalize.tap do |pos|
+    #   pos.x *= -Earth::DISTANCE
+    #   pos.z *= -Earth::DISTANCE
+    #   pos.y = sight.position.y
+    # end # カメラの向かい側
   end
 end
