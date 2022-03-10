@@ -3,25 +3,25 @@ class MoveCamera
   SIGHT_SPEED = 0.1
   @camera_move_count = 0
   def self.sun_camera_left(_, sight)
-    #if -10 <= sight.position.z <= 10
+    #if -50 <= sight.position.z <= 50
       sight.position.z += SIGHT_SPEED
     #end
   end
 
   def self.sun_camera_right(_, sight)
-    #if -10 <= sight.position.z <= 10
+    #if -50 <= sight.position.z <= 50
       sight.position.z -= SIGHT_SPEED
     #end
   end
 
   def self.sun_camera_up(_, sight)
-    #if -10 <= sight.position.x <= 10
+    #if -50 <= sight.position.x <= 50
       sight.position.x += SIGHT_SPEED
     #end
   end
 
   def self.sun_camera_down(_, sight)
-    #if -10 <= sight.position.x <= 10
+    #if -50 <= sight.position.x <= 50
       sight.position.x -= SIGHT_SPEED
     #end
   end
