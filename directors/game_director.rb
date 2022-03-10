@@ -62,6 +62,8 @@ module Directors
 
       # 各弾丸について当たり判定実施
       @bullets.each { |bullet| hit_any_enemies(bullet) }
+      
+      @earth.play(hit_earth)
 
       # 消滅済みの弾丸及び敵を配列とシーンから除去(わざと複雑っぽく記述しています)
       rejected_bullets = []
@@ -146,25 +148,28 @@ module Directors
 
     # 弾丸発射
     def shoot
-      # 現在カメラが向いている方向を進行方向とし、進行方向に対しBullet::SPEED分移動する単位単位ベクトルfを作成する
-      # f = Mittsu::Vector4.new(0, 0, 1, 0)
-      # f.apply_matrix4(self.camera.matrix).normalize
-      # f.multiply_scalar(Bullet::SPEED)
-
-      # 弾丸オブジェクト生成
+      # 弾丸オブジェクト生成 照準の位置を渡す
       bullet = Bullet.new(@sight.position)
       self.scene.add(bullet.mesh)
       @bullets << bullet
     end
 
-    # 弾丸と敵の当たり判定
+    # 地球と隕石の当たり判定
+    def hit_earth
+      distance_earth = earth.position.distance_to(enemy.position)
+      if distance_earth < 1.4
+        puts 'game over'
+      end
+    end
+
+    # 弾丸と隕石の当たり判定
     def hit_any_enemies(bullet)
       return if bullet.expired
 
       @enemies.each do |enemy|
         next if enemy.expired
-        distance = bullet.position.distance_to(enemy.position)
-        if distance < 0.8
+        distance_bullet = bullet.position.distance_to(enemy.position)
+        if distance_bullet < 0.8
           puts 'Hit!'
           bullet.expired = true
           enemy.expired = true
