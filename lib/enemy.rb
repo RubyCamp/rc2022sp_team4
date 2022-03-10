@@ -6,13 +6,13 @@ class Enemy
   # 初期化
   def initialize(x: nil, y: nil, z: nil)
     # 初期位置指定が無ければランダムに配置する
-    x ||= rand(10) / 10.0 - 0.5
-    y ||= 20
-    z ||= rand(10) / 10.0 - 0.5
+    x ||= rand() * 20 - 10
+    y ||= 30
+    z ||= rand() * 20 - 10
     pos = Mittsu::Vector3.new(x, y, -z)
-    self.mesh = MeshFactory.create_enemy(r: 0.2, color: 0x00ff00)
+    self.mesh = MeshFactory.create_enemy(r: 0.5, color: 0x00ff00)
     self.mesh.position = pos
-    @speed = 0.1
+    @speed = rand(0.05...0.2)
     @time = (y - Earth::DEFAULT_POSITION_Y) / @speed
     @vector_x = (Earth::REVOL_RADIUS * Math.sin(rand * 2 * Math::PI) - x) / @time
     @vector_z = (Earth::REVOL_RADIUS * Math.cos(rand * 2 * Math::PI) - z) / @time
