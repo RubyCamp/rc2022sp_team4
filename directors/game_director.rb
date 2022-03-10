@@ -72,7 +72,7 @@ module Directors
 
       # 一定のフレーム数経過毎に敵キャラ(隕石)を出現させる
       if (@frame_counter % 180).zero?
-        enemy = Enemy.new(revol_radius: Earth::DISTANCE)
+        enemy = Enemy.new
         @enemies << enemy
         self.scene.add(enemy.mesh)
       end
@@ -136,8 +136,8 @@ module Directors
       @sight = MeshFactory.create_sight
       @sight.rotation.x = Math::PI / 2.0
       @sight.position = self.camera.position.clone.normalize.tap do |pos|
-        pos.x *= -Earth::DISTANCE
-        pos.z *= -Earth::DISTANCE
+        pos.x *= -Earth::REVOL_RADIUS
+        pos.z *= -Earth::REVOL_RADIUS
         pos.y = @earth.position.y
       end
       self.scene.add(@sight)

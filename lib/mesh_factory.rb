@@ -58,7 +58,7 @@ class MeshFactory
 
   # 軌道の生成
   def self.create_revol
-    geometry = Mittsu::RingGeometry.new(Earth::DISTANCE - 0.05, Earth::DISTANCE + 0.05, 32, 4)
+    geometry = Mittsu::RingGeometry.new(Earth::REVOL_RADIUS - 0.05, Earth::REVOL_RADIUS + 0.05, 32, 4)
     material = Mittsu::MeshBasicMaterial.new(color: 0x333333)
     Mittsu::Mesh.new(geometry, material)
   end
