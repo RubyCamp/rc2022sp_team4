@@ -98,7 +98,7 @@ module Directors
       # ESCキー押下でエンディングに無理やり遷移
       when GLFW_KEY_ESCAPE
         puts 'シーン遷移 → EndingDirector'
-        p $exec_time = Time.now - $time_now
+        @@exec_time = Time.now - @@start_time
         transition_to_next_director
       # SPACEキー押下で弾丸を発射
       when GLFW_KEY_SPACE
@@ -163,7 +163,7 @@ module Directors
         distance_earth = @earth.position.distance_to(enemy.position)
         if distance_earth < 1.4
           puts 'シーン遷移 → EndingDirector'
-          p $exec_time = Time.now - $time_now
+          @@exec_time = Time.now - @@start_time
           transition_to_next_director
         end
       end

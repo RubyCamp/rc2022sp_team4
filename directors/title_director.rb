@@ -27,8 +27,6 @@ module Directors
 
       @description.play
       @description2.play
-
- 
     end
 
     # キー押下（単発）時のハンドリング
@@ -37,7 +35,7 @@ module Directors
       # SPACEキー押下で弾丸を発射
       when GLFW_KEY_SPACE
         puts 'シーン遷移 → GameDirector'
-        $time_now = Time.now
+        @@start_time = Time.now
         transition_to_next_director
       end
     end
