@@ -6,6 +6,7 @@ module Directors
   class GameDirector < Base
     CAMERA_ROTATE_SPEED_X = 0.01
     CAMERA_ROTATE_SPEED_Y = 0.01
+    CAMERA_REVOLUTION = 15
 
     # 初期化
     def initialize(screen_width:, screen_height:, renderer:)
@@ -33,18 +34,18 @@ module Directors
       @camera_rad = 0
 
       # 公転カメラと太陽カメラ
-      @camera_keys = %i[sun_camera revol_camera]
+      @camera_keys = %i[revol_camera sun_camera]
       @camera_fu_key_up = { sun_camera: :sun_camera_up, revol_camera: :revol_camera_up }
       @camera_fu_key_down = { sun_camera: :sun_camera_down, revol_camera: :revol_camera_down }
       @camera_fu_key_left = { sun_camera: :sun_camera_left, revol_camera: :revol_camera_left }
       @camera_fu_key_right = { sun_camera: :sun_camera_right, revol_camera: :revol_camera_right }
-      @cameras = { sun_camera: self.camera, revol_camera: Mittsu::PerspectiveCamera.new(self.camera.fov, self.camera.aspect, 0.1, 1000.0).tap { 
+      @cameras = { sun_camera: Mittsu::PerspectiveCamera.new(self.camera.fov, self.camera.aspect, 0.1, 1000.0).tap do
         |cmr|
-        cmr.position.set(0, -4, 0) # yは-5以上
+        cmr.position.set(0, -2, 0) # yは-5以上
         # cmr.position.set(0, -8, 0) # 太陽で隠れて地球が見えん
         # 移動後のカメラ位置から、原点（[0, 0, 0]）を注視し直す
         cmr.look_at(Mittsu::Vector3.new(0, 0, 0))
-      } }
+      end, revol_camera: self.camera }
     end
 
     # １フレーム分の進行処理
@@ -98,6 +99,7 @@ module Directors
       when GLFW_KEY_SPACE
         shoot
       when GLFW_KEY_Z, GLFW_KEY_A
+        p @camera_keys.first
         # 2要素だけだし、reverseで
         self.camera = @cameras[@camera_keys.reverse!.first]
         # rendererの再設定
@@ -109,15 +111,15 @@ module Directors
 
     # ゲーム本編の登場オブジェクト群を生成
     def create_objects
-      self.camera.position.set(0, 2, 15)
+      self.camera.position.set(0, 2, CAMERA_REVOLUTION)
       # 移動後のカメラ位置から、原点（[0, 0, 0]）を注視し直す
       self.camera.look_at(Mittsu::Vector3.new(0, 2, 0))
-      
+
       # 太陽生成。
       @sun = MeshFactory.create_sun
       @sun.position.set(0, 0, 0)
       self.scene.add(@sun)
-      
+
       # 太陽(光)をセット
       @sunlite = LightFactory.create_sun_light
       @sunlite.position.set(0, 0, 0)
@@ -134,15 +136,13 @@ module Directors
       self.scene.add(revolution)
 
       # 照準設定
-      geometry = Mittsu::RingGeometry.new(0.2, 0.4, 16, 4)
-      material = Mittsu::MeshBasicMaterial.new(color: 0xff0000)
-      @sight = Mittsu::Mesh.new(geometry, material)
-      # @sight = MeshFactory.create_revol
-      @sight.position = self.camera.position.clone.normalize.tap { |pos|
+      @sight = MeshFactory.create_sight
+      @sight.rotation.x = Math::PI / 2.0
+      @sight.position = self.camera.position.clone.normalize.tap do |pos|
         pos.x *= -Earth::DISTANCE
         pos.z *= -Earth::DISTANCE
         pos.y = @earth.position.y
-      }
+      end
       self.scene.add(@sight)
     end
 
