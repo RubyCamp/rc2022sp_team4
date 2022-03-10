@@ -26,7 +26,7 @@ class Earth
     @forwarded_move_count += 1
   end
 
-  #　地球の自転
+  # 地球の自転
   def spin
     self.mesh.rotate_x(0.01)
     self.mesh.rotate_y(0.01)
