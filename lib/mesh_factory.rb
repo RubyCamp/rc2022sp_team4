@@ -65,8 +65,8 @@ class MeshFactory
 
   # 照準の生成
   def self.create_sight
-    geometry = Mittsu::RingGeometry.new(0.2, 0.4, 16, 4)
-    material = Mittsu::MeshBasicMaterial.new(color: 0xff0000)
+    geometry = Mittsu::RingGeometry.new(0.1, 0.2, 16, 4)
+    material = Mittsu::MeshBasicMaterial.new(color: 0x66ff99)
     Mittsu::Mesh.new(geometry, material)
   end
 

@@ -71,7 +71,7 @@ module Directors
       rejected_enemies.each { |enemy| self.scene.remove(enemy.mesh) }
 
       # 一定のフレーム数経過毎に敵キャラ(隕石)を出現させる
-      if (@frame_counter % 180).zero?
+      if (@frame_counter % 10).zero?
         enemy = Enemy.new
         @enemies << enemy
         self.scene.add(enemy.mesh)
@@ -151,7 +151,7 @@ module Directors
       # f.multiply_scalar(Bullet::SPEED)
 
       # 弾丸オブジェクト生成
-      bullet = Bullet.new(sight_pos: @sight.position)
+      bullet = Bullet.new(@sight.position)
       self.scene.add(bullet.mesh)
       @bullets << bullet
     end
@@ -163,7 +163,7 @@ module Directors
       @enemies.each do |enemy|
         next if enemy.expired
         distance = bullet.position.distance_to(enemy.position)
-        if distance < 0.2
+        if distance < 0.8
           puts 'Hit!'
           bullet.expired = true
           enemy.expired = true
