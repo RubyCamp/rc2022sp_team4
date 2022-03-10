@@ -4,54 +4,22 @@ class MoveCamera
   @camera_move_count = 0
 
   def self.sun_camera_left(_, sight)
-<<<<<<< HEAD
-    p 'sun_camera_left'
-    # 照準の行動制限
-    if sight.position.z >= 9.5
-      return sight.position.z
-    end
-=======
     return if sight.position.z >= 9.5
->>>>>>> main
     sight.position.z += SIGHT_SPEED 
   end
 
   def self.sun_camera_right(_, sight)
-<<<<<<< HEAD
-    p 'sun_camera_right'
-    # 照準の行動制限
-    if sight.position.z <= -9.5
-      return sight.position.z
-    end
-=======
     return if sight.position.z <= -9.5
->>>>>>> main
     sight.position.z -= SIGHT_SPEED
   end
 
   def self.sun_camera_up(_, sight)
-<<<<<<< HEAD
-    p 'sun_camera_up'
-    # 照準の行動制限
-    if sight.position.x >= 7
-      return sight.position.x
-    end
-=======
     return if sight.position.x >= 7
->>>>>>> main
     sight.position.x += SIGHT_SPEED
   end
 
   def self.sun_camera_down(_, sight)
-<<<<<<< HEAD
-    p 'sun_camera_down'
-    # 照準の行動制限
-    if sight.position.x <= -7
-      return sight.position.x
-    end
-=======
     return if sight.position.x <= -7
->>>>>>> main
     sight.position.x -= SIGHT_SPEED
   end
 
