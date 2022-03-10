@@ -24,4 +24,11 @@ class Earth
     self.mesh.position.z = DISTANCE * Math.cos(@forwarded_frame_count * speed_level / 5.0 * 0.1)
     @forwarded_frame_count += 1
   end
+
+  #　地球の自転
+  def spin
+    self.mesh.rotate_x(0.1)
+    self.mesh.rotate_y(0.1)
+    self.mesh.rotate_z(0.1)
+  end
 end

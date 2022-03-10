@@ -52,6 +52,9 @@ module Directors
       @earth.play(speed_level: 1)
       # ENTERキーでブースト
       @earth.play(speed_level: 1) if self.renderer.window.key_down?(GLFW_KEY_ENTER)
+      
+      #　地球の自転呼び出し
+      @earth.spin
 
       # 現在発射済みの弾丸を一通り動かす
       @bullets.each(&:play)
