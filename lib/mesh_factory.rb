@@ -7,7 +7,7 @@ class MeshFactory
     material = generate_material(
       :basic,
       nil,
-      TextureFactory.create_texture_map('sun.png'),
+      map,
       nil
     )
     Mittsu::Mesh.new(geometry, material)
