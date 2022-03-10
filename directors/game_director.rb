@@ -31,8 +31,7 @@ module Directors
       @camera_keys = %i[sun_camera revol_camera]
       @cameras = { sun_camera: Mittsu::PerspectiveCamera.new(self.camera.fov, self.camera.aspect, 0.1, 1000.0).tap do
         |cmr|
-        cmr.position.set(0, -2, 0) # yは-5以上
-        # cmr.position.set(0, -8, 0) # 太陽で隠れて地球が見えん
+        cmr.position.set(0, -2, 0)
         # 移動後のカメラ位置から、原点（[0, 0, 0]）を注視し直す
         cmr.look_at(Mittsu::Vector3.new(0, 0, 0))
       end, revol_camera: self.camera }
@@ -49,9 +48,9 @@ module Directors
     # １フレーム分の進行処理
     def play
       # 地球を少しずつ回転させ、公転?してる雰囲気を醸し出す
-      @earth.play(speed_level: 1)
+      @earth.revolution(speed_level: 1)
       # ENTERキーでブースト
-      @earth.play(speed_level: 1) if self.renderer.window.key_down?(GLFW_KEY_ENTER)
+      @earth.revolution(speed_level: 1) if self.renderer.window.key_down?(GLFW_KEY_ENTER)
 
       # 現在発射済みの弾丸を一通り動かす
       @bullets.each(&:play)
