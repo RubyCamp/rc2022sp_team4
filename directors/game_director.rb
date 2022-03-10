@@ -104,7 +104,6 @@ module Directors
       when GLFW_KEY_SPACE
         shoot
       when GLFW_KEY_Z, GLFW_KEY_A
-        p @camera_keys.first
         # 2要素だけだし、reverseで
         self.camera = @cameras[@camera_keys.reverse!.first]
         # rendererの再設定
