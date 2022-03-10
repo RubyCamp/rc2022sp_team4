@@ -164,6 +164,7 @@ module Directors
         distance_earth = @earth.position.distance_to(enemy.position)
         if distance_earth < 1.4
           puts 'シーン遷移 → EndingDirector'
+          p $exec_time = Time.now - $time_now
           transition_to_next_director
         end
       end
