@@ -2,16 +2,26 @@
 # ゲーム内に登場するメッシュを生産する役割を一手に引き受ける
 class MeshFactory
   # 弾丸の生成
-  def self.create_bullet(r: 0.1, div_w: 16, div_h: 16, color: nil, map: nil, normal_map: nil)
+  def self.create_bullet(r: 0.5, div_w: 16, div_h: 16, color: nil, map: nil, normal_map: nil)
     geometry = Mittsu::SphereGeometry.new(r, div_w, div_h)
-    material = generate_material(:basic, color, map, normal_map)
+    material = generate_material(
+      :basic,
+      nil,
+      TextureFactory.create_texture_map('sun.png'),
+      nil
+    )
     Mittsu::Mesh.new(geometry, material)
   end
 
   # 敵キャラクタ(隕石)の生成
   def self.create_enemy(r: 0.5, div_w: 16, div_h: 16, color: nil, map: nil, normal_map: nil)
     geometry = Mittsu::SphereGeometry.new(r, div_w, div_h)
-    material = generate_material(:basic, color, map, normal_map)
+    material = generate_material(
+      :basic,
+      nil,
+      TextureFactory.create_texture_map('meteo.png'),
+      nil
+    )
     Mittsu::Mesh.new(geometry, material)
   end
 
