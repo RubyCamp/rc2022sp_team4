@@ -7,8 +7,8 @@ class Bullet
 
   # 初期化
   # 進行方向を表す単位ベクトルを受領する
-  def initialize(sight_pos)
-    self.mesh = MeshFactory.create_bullet(r: 0.3, color: 0xff0000)
+  def initialize(sight_pos, bullet_image)
+    self.mesh = MeshFactory.create_bullet(r: 0.3, color: 0xff0000, map: bullet_image)
     x = y = z = 0
     pos = Mittsu::Vector3.new(x, y, z)
     self.mesh.position = pos

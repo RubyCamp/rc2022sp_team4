@@ -43,6 +43,9 @@ module Directors
 
       # ゲーム本編の登場オブジェクト群を生成
       create_objects
+
+      @bullet_image=TextureFactory.create_texture_map('sun.png')
+
     end
 
     # １フレーム分の進行処理
@@ -150,7 +153,7 @@ module Directors
     # 弾丸発射
     def shoot
       # 弾丸オブジェクト生成 照準の位置を渡す
-      bullet = Bullet.new(@sight.position)
+      bullet = Bullet.new(@sight.position, @bullet_image)
       self.scene.add(bullet.mesh)
       @bullets << bullet
     end
