@@ -5,6 +5,7 @@ class MoveCamera
   
   def self.sun_camera_left(_, sight)
     p 'sun_camera_left'
+    # 照準の行動制限
     if sight.position.z >= 9.5
       return sight.position.z
     end
@@ -13,6 +14,7 @@ class MoveCamera
 
   def self.sun_camera_right(_, sight)
     p 'sun_camera_right'
+    # 照準の行動制限
     if sight.position.z <= -9.5
       return sight.position.z
     end
@@ -21,6 +23,7 @@ class MoveCamera
 
   def self.sun_camera_up(_, sight)
     p 'sun_camera_up'
+    # 照準の行動制限
     if sight.position.x >= 7
       return sight.position.x
     end
@@ -29,6 +32,7 @@ class MoveCamera
 
   def self.sun_camera_down(_, sight)
     p 'sun_camera_down'
+    # 照準の行動制限
     if sight.position.x <= -7
       return sight.position.x
     end

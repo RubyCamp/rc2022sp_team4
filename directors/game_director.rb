@@ -41,6 +41,8 @@ module Directors
       # 移動後のカメラ位置から、原点（[0, 0, 0]）を注視し直す
       self.camera.look_at(Mittsu::Vector3.new(0, 2, 0))
 
+      
+
       # ゲーム本編の登場オブジェクト群を生成
       create_objects
     end
