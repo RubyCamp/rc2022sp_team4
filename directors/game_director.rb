@@ -52,8 +52,7 @@ module Directors
       # 地球を少しずつ回転させ、公転?してる雰囲気を醸し出す
       @earth.revolution(speed_level: 1)
       # ENTERキーでブースト
-      @earth.play(speed_level: 1) if self.renderer.window.key_down?(GLFW_KEY_ENTER)
-      
+      @earth.revolution(speed_level: 1) if self.renderer.window.key_down?(GLFW_KEY_ENTER)
       #　地球の自転呼び出し
       @earth.spin
 
@@ -65,6 +64,8 @@ module Directors
 
       # 各弾丸について当たり判定実施
       @bullets.each { |bullet| hit_any_enemies(bullet) }
+      
+      hit_earth
 
       # 消滅済みの弾丸及び敵を配列とシーンから除去(わざと複雑っぽく記述しています)
       rejected_bullets = []
@@ -96,6 +97,7 @@ module Directors
       # ESCキー押下でエンディングに無理やり遷移
       when GLFW_KEY_ESCAPE
         puts 'シーン遷移 → EndingDirector'
+        p $exec_time = Time.now - $time_now
         transition_to_next_director
       # SPACEキー押下で弾丸を発射
       when GLFW_KEY_SPACE
@@ -149,25 +151,31 @@ module Directors
 
     # 弾丸発射
     def shoot
-      # 現在カメラが向いている方向を進行方向とし、進行方向に対しBullet::SPEED分移動する単位単位ベクトルfを作成する
-      # f = Mittsu::Vector4.new(0, 0, 1, 0)
-      # f.apply_matrix4(self.camera.matrix).normalize
-      # f.multiply_scalar(Bullet::SPEED)
-
-      # 弾丸オブジェクト生成
+      # 弾丸オブジェクト生成 照準の位置を渡す
       bullet = Bullet.new(@sight.position)
       self.scene.add(bullet.mesh)
       @bullets << bullet
     end
 
-    # 弾丸と敵の当たり判定
+    # 地球と隕石の当たり判定
+    def hit_earth
+      @enemies.each do |enemy|
+        distance_earth = @earth.position.distance_to(enemy.position)
+        if distance_earth < 1.4
+          puts 'シーン遷移 → EndingDirector'
+          transition_to_next_director
+        end
+      end
+    end
+
+    # 弾丸と隕石の当たり判定
     def hit_any_enemies(bullet)
       return if bullet.expired
 
       @enemies.each do |enemy|
         next if enemy.expired
-        distance = bullet.position.distance_to(enemy.position)
-        if distance < 0.8
+        distance_bullet = bullet.position.distance_to(enemy.position)
+        if distance_bullet < 0.8
           puts 'Hit!'
           bullet.expired = true
           enemy.expired = true
