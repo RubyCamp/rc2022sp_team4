@@ -44,6 +44,7 @@ module Directors
         @@start_time = Time.now
         @@game_kind = :shoot_earth
         transition_to_next_director
+      # SHIFTキー押下で特大弾丸発射(クールタイムあり)
       when GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_LEFT_SHIFT
         puts 'シーン遷移 → GameDirector(Can\'t always use shoot method)'
         @@start_time = Time.now

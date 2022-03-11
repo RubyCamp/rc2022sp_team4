@@ -11,7 +11,7 @@ module Directors
 
     def create_ending_object()
       flag = true
-      lambda do 
+      lambda do
         return if flag == false 
         flag = false
         # FINISHの文字のアニメーションパネル生成

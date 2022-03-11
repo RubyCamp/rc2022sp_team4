@@ -239,7 +239,7 @@ module Directors
         distance_bullet = bullet.position.distance_to(enemy.position)
         if distance_bullet < 0.5 + bullet.radius
           puts 'Hit!'
-          bullet.expired = true if bullet.radius <= 1 # デカ玉だったら削除しない
+          bullet.expired = true if @@game_kind != :cool_time_shoot # デカ玉だったら削除しない
           enemy.expired = true
         end
       end
