@@ -1,7 +1,7 @@
 # rc2022sp_team4
 RubyCamp2022 Spring Team4 - unifive
 
-# 君は太陽 ~You're the SUN~
+# 君は太陽 \~You're the SUN\~
 
 ## ゲーム概要
 - 君自身(player)は太陽。​
