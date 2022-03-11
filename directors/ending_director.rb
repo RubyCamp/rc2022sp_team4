@@ -70,7 +70,7 @@ module Directors
       when GLFW_KEY_ESCAPE
         puts 'クリア!!'
         transition_to_next_director # self.next_directorがセットされていないのでメインループが終わる
-      when GLFW_KEY_SPACE
+      when GLFW_KEY_BACKSPACE
         puts 'クリア!! replay!'
         self.next_director = Directors::TitleDirector.new(screen_width: self.renderer.width, screen_height: self.renderer.height, renderer: self.renderer)
         transition_to_next_director

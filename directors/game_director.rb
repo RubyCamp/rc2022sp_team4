@@ -222,7 +222,7 @@ module Directors
     def enemy_hit_earth
       @enemies.each do |enemy|
         distance_earth = @earth.position.distance_to(enemy.position)
-        if distance_earth < 1.4
+        if distance_earth < 1.5
           puts 'シーン遷移 → EndingDirector'
           @@exec_time = Time.now - @@start_time
           transition_to_next_director
